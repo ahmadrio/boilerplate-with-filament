@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+[ ! -d "./node_modules" ] && echo "Please run: npm install" && exit 1
+[ ! -d "./vendor" ] && echo "Please run: composer install" && exit 1
+
+echo "===> Running laravel pint test..."
+cmd="./vendor/bin/pint --test"
+$cmd
+status=$?
+[ $status -eq 0 ] && echo "Laravel pint successfully tested" || exit 1
