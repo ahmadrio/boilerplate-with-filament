@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class UserResource extends Resource
 {
@@ -42,20 +43,23 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required()
-                            ->unique(ignoreRecord: false),
+                            ->unique(ignoreRecord: true),
 
+                        // ref: https://v2.filamentphp.com/tricks/password-form-fields
                         Forms\Components\TextInput::make('password')
                             ->label(trans('resources/globals.filament.password'))
                             ->password()
                             ->autocomplete(false)
-                            ->required()
+                            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn (string $context): bool => $context === 'create')
                             ->confirmed(),
 
                         Forms\Components\TextInput::make('password_confirmation')
                             ->label(trans('resources/globals.filament.password_confirmation'))
                             ->password()
                             ->autocomplete(false)
-                            ->required(),
+                            ->required(fn (string $context): bool => $context === 'create'),
                     ])
                     ->columns(2),
             ]);
