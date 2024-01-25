@@ -204,5 +204,10 @@
     "Web Server is Down": "Web server sedang turun",
     "Whoops!": "Aduh!",
     "Yes": "Ya",
-    "You are receiving this email because we received a password reset request for your account.": "Anda menerima surel ini karena kami menerima permintan pengaturan ulang kata sandi untuk akun anda."
+    "You are receiving this email because we received a password reset request for your account.": "Anda menerima surel ini karena kami menerima permintan pengaturan ulang kata sandi untuk akun anda.",
+    "Choose the permissions for this role": "Pilih izin untuk peran ini",
+    "Enter the current password": "Masukkan kata sandi saat ini",
+    "Enter the new password": "Masukkan kata sandi baru",
+    "Enter the password again": "Masukkan ulang kata sandi",
+    "Profile Information": "Informasi Profil"
 }

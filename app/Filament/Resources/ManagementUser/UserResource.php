@@ -1,9 +1,10 @@
 <?php declare(strict_types=1);
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\ManagementUser;
 
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\ManagementUser\UserResource\RelationManagers\RolesRelationManager;
 use App\Models\User;
+use Exception;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -53,7 +54,8 @@ class UserResource extends Resource
                             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $context): bool => $context === 'create')
-                            ->confirmed(),
+                            ->confirmed()
+                            ->live(debounce: 500),
 
                         Forms\Components\TextInput::make('password_confirmation')
                             ->label(trans('resources/globals.filament.password_confirmation'))
@@ -61,16 +63,26 @@ class UserResource extends Resource
                             ->autocomplete(false)
                             ->required(fn (string $context): bool => $context === 'create'),
                     ])
-                    ->columns(2),
+                    ->columns(),
             ]);
     }
 
+    /**
+     * @param  Table  $table
+     *
+     * @return Table
+     *
+     * @throws Exception
+     */
     public static function table(Table $table): Table
     {
         return $table
+            ->deferLoading()
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('id', '!=', auth()->id()))
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label(trans('resources/globals.filament.name'))
+                    ->description(fn (User $record): string => $record->getRoleNames()->implode(' | '))
                     ->searchable()
                     ->sortable(),
 
@@ -82,7 +94,7 @@ class UserResource extends Resource
                     ->label(trans('resources/globals.filament.created_at'))
                     ->searchable()
                     ->sortable()
-                    ->date('Y-m-d'),
+                    ->date(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -104,16 +116,17 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RolesRelationManager::class,
         ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'view' => Pages\ViewUser::route('/{record}'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => UserResource\Pages\ListUsers::route('/'),
+            'create' => UserResource\Pages\CreateUser::route('/create'),
+            'view' => UserResource\Pages\ViewUser::route('/{record}'),
+            'edit' => UserResource\Pages\EditUser::route('/{record}/edit'),
         ];
     }
 

@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\ManagementUser\UserResource\Pages;
 
-use App\Filament\Resources\UserResource;
+use App\Filament\Resources\ManagementUser\UserResource;
 use Filament\Actions;
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
